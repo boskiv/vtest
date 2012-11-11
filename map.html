@@ -9,6 +9,8 @@
 
     <!-- Le styles -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/video.css" rel="stylesheet">
+    <script src="js/video.js"></script>
     <style type="text/css">
       body {
         padding-top: 60px;
@@ -25,15 +27,16 @@
     <![endif]-->
 
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
+    <script src="js/smartinfowindow.js"></script>
     <script>
       var map;
       var home = new google.maps.LatLng(51.17, 71.43);
       var stations = [
-          ['АЗС №1', 51.15, 71.43, 4,0],
-          ['АЗС №2', 51.19, 71.43, 5,0],
+          ['АЗС №1', 51.15, 71.43, 1,0],
+          ['АЗС №2', 51.19, 71.43, 2,0],
           ['АЗС №3', 51.10, 71.23, 3,0],
-          ['АЗС №4', 51.125, 71.63, 2,1],
-          ['АЗС №5', 51.23, 71.33, 1,1]
+          ['АЗС №4', 51.125, 71.63, 4,1],
+          ['АЗС №5', 51.23, 71.33, 5,1]
         ];
       var iterator = 0;
       var markers = [];
@@ -48,16 +51,22 @@
         map = new google.maps.Map(document.getElementById('map_canvas'),
                 mapOptions);
         drop();
-      }
-
-      function drop() {
-        for (var i = 0; i < stations.length; i++) {
-          setTimeout(function() {
-            addMarker();
-          }, i * 500);
         }
-      }
+
+        function drop() {
+            for (var i = 0; i < stations.length; i++) {
+                setTimeout(function() {
+                addMarker();
+                }, i * 800);
+            }
+        }
+        
         var icon = "";
+        
+        var contentString = '<div>Hello</div>';
+        var infowindow = new google.maps.InfoWindow({
+             content: contentString
+        });
         
         function addMarker() {
             console.log(stations[iterator][1],stations[iterator][2]);
@@ -68,21 +77,109 @@
                 icon = "img/station.png";
             }
             
-            markers.push(new google.maps.Marker({
-            position: new google.maps.LatLng(stations[iterator][1],stations[iterator][2]),
-            map: map,
-            icon: icon,
-            title: stations[iterator][0],
-            draggable: false,
-            animation: google.maps.Animation.DROP
-            }));
+            var markerOptions = {
+                position: new google.maps.LatLng(stations[iterator][1],stations[iterator][2]),
+                map: map,
+                icon: icon,
+                title: stations[iterator][0],
+                draggable: false,
+                animation: google.maps.Animation.DROP    
+            };
+            
+            var marker = new google.maps.Marker(markerOptions);
+            marker.set("id", stations[iterator][3]);
+            markers.push(marker);
+            
+             
+            google.maps.event.addListener(marker, 'click', function() {
+                infowindow.close();
+                infowindow.setContent('<br /><div><table class="table table-striped">' +
+                '<tr>' +
+                    '<td><small>Some Desc</small></td>' +
+                    '<td><small>Some Value</small></td>' +
+                '</tr>' +
+                '<tr>' +
+                    '<td><small>Name</small></td>' +
+                    '<td><small>'+marker.title+'</small></td>' +
+                '</tr>' +
+                '</table>' +
+                '<a onclick="open_video_panel('+marker.get("id")+')" href="#">Открыть</a>' +
+                '</div>');
+                
+                infowindow.open(map,marker);
+            });
             
             iterator++;
         }
 
       google.maps.event.addDomListener(window, 'load', initialize);
       
+        function get_video_side_bar(id) {
+         content = '<div class="media" style="overflow:scroll;">' +
+                        '<a class="pull-left" href="#">' +
+                            '<img class="media-object" src="img/video_1.jpg">' +
+                        '</a>' +
+                        '<hr>' +
+                        '<a class="pull-left" href="#">' +
+                            '<img class="media-object" src="img/video_2.jpg">' +
+                        '</a>' +
+                        '<a class="pull-left" href="#">' +
+                            '<img class="media-object" src="img/video_3.jpg">' +
+                        '</a>' +
+                        '<a class="pull-left" href="#">' +
+                            '<img class="media-object" src="img/video_4.jpg">' +
+                        '</a>' +
+                        '<a class="pull-left" href="#">' +
+                            '<img class="media-object" src="img/video_5.jpg">' +
+                        '</a>' +
+                        '<a class="pull-left" href="#">' +
+                            '<img class="media-object" src="img/video_6.jpg">' +
+                        '</a>' +
+                        '<a class="pull-left" href="#">' +
+                            '<img class="media-object" src="img/video_7.jpg">' +
+                        '</a>' +
+                    '</div>';
+         return content;
+        }
       
+        function get_video_body(id){
+            /*
+        content =   <video id="example_video_1" class="video-js vjs-default-skin" controls preload="none" width="640" height="264"
+                    poster="//video-js.zencoder.com/oceans-clip.png"
+                    data-setup="{}">
+                    <source src="//video-js.zencoder.com/oceans-clip.mp4" type='video/mp4' />
+                    <source src="//video-js.zencoder.com/oceans-clip.webm" type='video/webm' />
+                    <source src="//video-js.zencoder.com/oceans-clip.ogv" type='video/ogg' />
+                    </video>
+                    <iframe width="960" height="720" src="https://www.youtube.com/embed/-pFixxGkR2k" frameborder="0" allowfullscreen></iframe>
+            */
+            
+         content =  '<video id="my_video_1" class="video-js vjs-default-skin" controls' +
+                    'preload="auto" width="640" height="264" poster="img/video_1.jpg"' +
+                    'data-setup="{}">' +
+                    '<source src="//www.youtube.com/embed/-pFixxGkR2k" type="video/mp4">' +
+                    '</video>';
+         return content;
+        }
+        function open_video_panel(id) {
+            $('#video_panel').html(
+            '<div class="container-fluid">' +
+                '<div class="row-fluid">' +
+                    '<div class="span2" style="height: 500px;overflow:scroll;">' +
+                    '<!--Sidebar content-->' +
+                    get_video_side_bar(id) +
+                    '</div>' +
+                '<div class="span10">' +
+                    '<!--Body content-->' +
+                    get_video_body(id) +
+                '</div>' +
+            '</div>'
+            
+            );
+            $('#video_panel').fadeIn(1000);
+            $('#map_canvas').fadeOut(1000);
+            console.log("Opening panel:"+id);
+        }
       
     </script>
   </head>
@@ -90,7 +187,13 @@
   <body>
     <div class="container">
         
+        
+        
         <div id="map_canvas" style="width:100%; height: 500px;">blablabal</div>
+        <div id="video_panel" style="width:100%; height: 500px;" class="hide">
+            
+        
+        </div>
         <div id="alerts">
         <table class="table">
               <thead>
