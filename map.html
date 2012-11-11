@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Security Video Manager</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Le styles -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <style type="text/css">
+      body {
+        padding-top: 60px;
+        padding-bottom: 40px;
+      }
+      .sidebar-nav {
+        padding: 9px 0;
+      }
+    </style>
+    
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
+    <script>
+      var map;
+      var home = new google.maps.LatLng(51.17, 71.43);
+      var stations = [
+          ['АЗС №1', 51.15, 71.43, 4,0],
+          ['АЗС №2', 51.19, 71.43, 5,0],
+          ['АЗС №3', 51.10, 71.23, 3,0],
+          ['АЗС №4', 51.125, 71.63, 2,1],
+          ['АЗС №5', 51.23, 71.33, 1,1]
+        ];
+      var iterator = 0;
+      var markers = [];
+      function initialize() {
+        var mapOptions = {
+          zoom: 11,
+          scrollwheel: false,
+          mapTypeId: google.maps.MapTypeId.ROADMAP,
+          center: home
+        };
+
+        map = new google.maps.Map(document.getElementById('map_canvas'),
+                mapOptions);
+        drop();
+      }
+
+      function drop() {
+        for (var i = 0; i < stations.length; i++) {
+          setTimeout(function() {
+            addMarker();
+          }, i * 500);
+        }
+      }
+        var icon = "";
+        
+        function addMarker() {
+            console.log(stations[iterator][1],stations[iterator][2]);
+            
+            if (stations[iterator][4] == 1) {
+                icon = "img/station-alert.png";    
+            } else {
+                icon = "img/station.png";
+            }
+            
+            markers.push(new google.maps.Marker({
+            position: new google.maps.LatLng(stations[iterator][1],stations[iterator][2]),
+            map: map,
+            icon: icon,
+            title: stations[iterator][0],
+            draggable: false,
+            animation: google.maps.Animation.DROP
+            }));
+            
+            iterator++;
+        }
+
+      google.maps.event.addDomListener(window, 'load', initialize);
+      
+      
+      
+    </script>
+  </head>
+
+  <body>
+    <div class="container">
+        
+        <div id="map_canvas" style="width:100%; height: 500px;">blablabal</div>
+        <div id="alerts">
+        <table class="table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Product</th>
+                  <th>Payment Taken</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="success">
+                  <td>1</td>
+                  <td>TB - Monthly</td>
+                  <td>01/04/2012</td>
+                  <td>Approved</td>
+                </tr>
+                <tr class="error">
+                  <td>2</td>
+                  <td>TB - Monthly</td>
+                  <td>02/04/2012</td>
+                  <td>Declined</td>
+                </tr>
+                <tr class="warning">
+                  <td>3</td>
+                  <td>TB - Monthly</td>
+                  <td>03/04/2012</td>
+                  <td>Pending</td>
+                </tr>
+                <tr class="info">
+                  <td>4</td>
+                  <td>TB - Monthly</td>
+                  <td>04/04/2012</td>
+                  <td>Call in to confirm</td>
+                </tr>
+              </tbody>
+            </table>
+        </div>
+
+      
+
+      <hr>
+
+      <footer>
+        <p>&copy; Company 2012</p>
+      </footer>
+    </div>
+   
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    
+    
+  </body>
+</html>
